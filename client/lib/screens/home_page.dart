@@ -639,38 +639,72 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildFeaturedCard() {
-    // Use the first enrolled shop from the loaded stamp-cards list.
-    // The search API annotates each shop with enrollmentId when the user is
-    // enrolled, so this stays in sync with _loadHomeData results.
-    final enrolledShop =
-        _stampCards.where((s) => s.enrollmentId != null).firstOrNull;
-    if (enrolledShop == null) return const SizedBox.shrink();
+    // Cross-reference enrollment data with loaded stamp cards.
+    // The shops API does not annotate enrollment IDs, so we match manually.
+    final enrollments = context
+        .watch<EnrollmentProvider>()
+        .enrollments
+        .where((e) => !e.isRedeemed && !e.isCompleted)
+        .toList();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.star_rounded,
-                  color: AppColors.primaryGreen, size: 16),
-              const SizedBox(width: 6),
-              Text(
-                'Carte en cours',
-                style: GoogleFonts.poppins(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primaryGreen,
+    if (enrollments.isEmpty || _stampCards.isEmpty) return const SizedBox.shrink();
+
+    for (final enrollment in enrollments) {
+      final matchingCard = _stampCards.where((s) {
+        if (s.loyaltyProgramId != null) {
+          return s.loyaltyProgramId == enrollment.loyaltyProgramId;
+        }
+        return s.id == enrollment.shopId;
+      }).firstOrNull;
+
+      if (matchingCard == null) continue;
+
+      final shopWithEnrollment = Shop(
+        id: matchingCard.id,
+        enrollmentId: enrollment.id,
+        loyaltyProgramId: matchingCard.loyaltyProgramId,
+        name: matchingCard.name,
+        stamps: enrollment.stampsCollected,
+        totalRequired: enrollment.stampsRequired,
+        dealType: matchingCard.dealType,
+        timeLeft: matchingCard.timeLeft,
+        location: matchingCard.location,
+        rewardValue: matchingCard.rewardValue,
+        rewardType: matchingCard.rewardType,
+        imageUrl: matchingCard.imageUrl,
+        logoUrl: matchingCard.logoUrl,
+        latitude: matchingCard.latitude,
+        longitude: matchingCard.longitude,
+      );
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.star_rounded,
+                    color: AppColors.primaryGreen, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  'Carte en cours',
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryGreen,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          FlippableLoyaltyCard(shop: enrolledShop),
-        ],
-      ),
-    );
+              ],
+            ),
+            const SizedBox(height: 8),
+            FlippableLoyaltyCard(shop: shopWithEnrollment),
+          ],
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 
   Widget _buildMapSection() {

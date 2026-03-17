@@ -31,12 +31,7 @@ class EnrollmentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border(
-          left: const BorderSide(color: AppColors.primaryGreen, width: 4),
-          top: BorderSide(color: Colors.grey.shade100, width: 1),
-          right: BorderSide(color: Colors.grey.shade100, width: 1),
-          bottom: BorderSide(color: Colors.grey.shade100, width: 1),
-        ),
+        border: Border.all(color: Colors.grey.shade100, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryGreen.withValues(alpha: 0.07),
@@ -50,24 +45,38 @@ class EnrollmentCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(14),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 12),
-                _buildProgress(),
-                const SizedBox(height: 12),
-                _buildFooter(),
-              ],
-            ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 4,
+                color: AppColors.primaryGreen,
+              ),
+              Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onTap,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildHeader(),
+                          const SizedBox(height: 12),
+                          _buildProgress(),
+                          const SizedBox(height: 12),
+                          _buildFooter(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

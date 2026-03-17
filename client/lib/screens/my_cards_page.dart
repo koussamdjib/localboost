@@ -1,8 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -70,10 +66,6 @@ class _MyCardsPageState extends State<MyCardsPage> {
         _expandedCards.add(shopId);
       }
     });
-  }
-
-  void _setCurrentPosition(LatLng position) {
-    setState(() => _currentPosition = position);
   }
 
   @override

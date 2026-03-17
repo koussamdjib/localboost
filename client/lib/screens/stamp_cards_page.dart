@@ -124,13 +124,43 @@ class _StampCardsPageState extends State<StampCardsPage> {
             itemCount: _cards.length,
             itemBuilder: (context, index) {
               final shop = _cards[index];
-              final isEnrolled = shop.enrollmentId != null;
+
+              // Cross-reference with enrollments since API doesn't annotate
+              // enrollment IDs on shop discovery API responses.
+              final enrollment = enrollmentProvider.enrollments.where((e) {
+                if (shop.loyaltyProgramId != null) {
+                  return e.loyaltyProgramId == shop.loyaltyProgramId;
+                }
+                return e.shopId == shop.id;
+              }).firstOrNull;
+
+              if (enrollment != null) {
+                final enrolledShop = Shop(
+                  id: shop.id,
+                  enrollmentId: enrollment.id,
+                  loyaltyProgramId: shop.loyaltyProgramId,
+                  name: shop.name,
+                  stamps: enrollment.stampsCollected,
+                  totalRequired: enrollment.stampsRequired,
+                  dealType: shop.dealType,
+                  timeLeft: shop.timeLeft,
+                  location: shop.location,
+                  rewardValue: shop.rewardValue,
+                  rewardType: shop.rewardType,
+                  imageUrl: shop.imageUrl,
+                  logoUrl: shop.logoUrl,
+                  latitude: shop.latitude,
+                  longitude: shop.longitude,
+                );
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: _buildEnrolledCard(context, enrolledShop, enrollmentProvider),
+                );
+              }
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 20),
-                child: isEnrolled
-                    ? _buildEnrolledCard(context, shop, enrollmentProvider)
-                    : _buildDiscoveryCard(context, shop),
+                child: _buildDiscoveryCard(context, shop),
               );
             },
           );

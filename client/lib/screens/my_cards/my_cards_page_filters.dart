@@ -22,64 +22,6 @@ extension _MyCardsPageFilters on _MyCardsPageState {
     );
   }
 
-  Widget _buildSortBar() {
-    return Container(
-      color: AppColors.lightGray,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          Icon(Icons.sort, size: 18, color: Colors.grey.shade600),
-          const SizedBox(width: 8),
-          Text(
-            'Trier par:',
-            style: GoogleFonts.poppins(
-              color: Colors.grey.shade600,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: DropdownButton<String>(
-                value: _selectedSort,
-                isExpanded: true,
-                underline: const SizedBox(),
-                icon: const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppColors.primaryGreen,
-                  size: 20,
-                ),
-                style: GoogleFonts.poppins(
-                  color: AppColors.charcoalText,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-                items: ['Défaut', 'A-Z', 'Plus proche']
-                    .map((value) => DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        ))
-                    .toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    _updateSelectedSort(newValue);
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFilterChip(String label, IconData icon) {
     final isSelected = _selectedFilter == label;
     return InkWell(
@@ -118,3 +60,4 @@ extension _MyCardsPageFilters on _MyCardsPageState {
     );
   }
 }
+

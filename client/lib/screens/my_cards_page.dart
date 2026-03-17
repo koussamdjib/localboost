@@ -15,13 +15,9 @@ import 'package:localboost_client/widgets/loyalty_card/flippable_loyalty_card.da
 import 'package:localboost_shared/core/constants/app_colors.dart';
 import 'package:localboost_shared/core/utils/distance_calculator.dart';
 import 'package:localboost_shared/models/enrollment.dart';
-import 'package:localboost_shared/models/flyer.dart';
-import 'package:localboost_shared/models/search_filter.dart';
 import 'package:localboost_shared/models/shop.dart';
 import 'package:localboost_shared/providers/auth_provider.dart';
 import 'package:localboost_shared/providers/enrollment_provider.dart';
-import 'package:localboost_shared/services/flyer_service.dart';
-import 'package:localboost_shared/services/search_service.dart';
 
 part 'my_cards/my_cards_page_location.dart';
 part 'my_cards/my_cards_page_data.dart';
@@ -44,21 +40,12 @@ class MyCardsPage extends StatefulWidget {
 
 class _MyCardsPageState extends State<MyCardsPage> {
   String _selectedFilter = 'Tous';
-  String _selectedSort = 'Défaut';
-  LatLng? _currentPosition;
   final Set<String> _expandedCards = {};
-  final FlyerService _flyerService = FlyerService();
-
-  List<Shop> _marketplaceOffers = <Shop>[];
-  bool _isLoadingMarketplaceOffers = false;
-  String? _marketplaceOffersError;
-
-  StreamSubscription<Position>? _positionStream;
+  LatLng? _currentPosition;
 
   @override
   void initState() {
     super.initState();
-    _initLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final enrollmentProvider =
@@ -66,19 +53,12 @@ class _MyCardsPageState extends State<MyCardsPage> {
       if (authProvider.user != null) {
         enrollmentProvider.loadEnrollments(authProvider.user!.id);
       }
-      _loadMarketplaceOffers();
     });
   }
 
   void _updateSelectedFilter(String filter) {
     setState(() {
       _selectedFilter = filter;
-    });
-  }
-
-  void _updateSelectedSort(String sort) {
-    setState(() {
-      _selectedSort = sort;
     });
   }
 
@@ -93,15 +73,11 @@ class _MyCardsPageState extends State<MyCardsPage> {
   }
 
   void _setCurrentPosition(LatLng position) {
-    setState(() {
-      _currentPosition = position;
-    });
-    _loadMarketplaceOffers();
+    setState(() => _currentPosition = position);
   }
 
   @override
   void dispose() {
-    _positionStream?.cancel();
     super.dispose();
   }
 
@@ -113,7 +89,7 @@ class _MyCardsPageState extends State<MyCardsPage> {
         backgroundColor: AppColors.white,
         elevation: 0,
         title: Text(
-          'Mes Offres',
+          'Mes Cartes',
           style: GoogleFonts.poppins(
             color: AppColors.charcoalText,
             fontWeight: FontWeight.w700,
@@ -125,8 +101,7 @@ class _MyCardsPageState extends State<MyCardsPage> {
         builder: (context, enrollmentProvider, child) {
           final shops = _filteredShops;
 
-          if ((enrollmentProvider.isLoading || _isLoadingMarketplaceOffers) &&
-              shops.isEmpty) {
+          if (enrollmentProvider.isLoading && shops.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primaryGreen),
             );
@@ -135,59 +110,17 @@ class _MyCardsPageState extends State<MyCardsPage> {
           return Column(
             children: [
               _buildFilterChips(),
-              _buildSortBar(),
-              if (_marketplaceOffersError != null)
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.orange.shade200),
-                  ),
-                  child: Text(
-                    _marketplaceOffersError!,
-                    style: GoogleFonts.poppins(
-                      color: Colors.orange.shade900,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
               Expanded(
                 child: shops.isEmpty
                     ? _buildEmptyState()
                     : RefreshIndicator(
                         color: AppColors.primaryGreen,
                         onRefresh: () async {
-                          final prevStamps = enrollmentProvider.enrollments
-                              .fold<int>(0, (sum, e) => sum + e.stampsCollected);
                           final authProvider =
                               Provider.of<AuthProvider>(context, listen: false);
-                          final messenger = ScaffoldMessenger.of(context);
-                          await Future.wait<void>([
-                            if (authProvider.user != null)
-                              enrollmentProvider
-                                  .loadEnrollments(authProvider.user!.id),
-                            _loadMarketplaceOffers(),
-                          ]);
-                          final newStamps = enrollmentProvider.enrollments
-                              .fold<int>(0, (sum, e) => sum + e.stampsCollected);
-                          if (newStamps > prevStamps) {
-                            if (!mounted) return;
-                            final diff = newStamps - prevStamps;
-                            messenger.showSnackBar(SnackBar(
-                              content: Text(
-                                '\uD83C\uDF89 +$diff timbre${diff > 1 ? "s" : ""} re\u00e7u${diff > 1 ? "s" : ""} !',
-                                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                              ),
-                              backgroundColor: AppColors.primaryGreen,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              duration: const Duration(seconds: 3),
-                            ));
+                          if (authProvider.user != null) {
+                            await enrollmentProvider
+                                .loadEnrollments(authProvider.user!.id);
                           }
                         },
                         child: ListView.builder(

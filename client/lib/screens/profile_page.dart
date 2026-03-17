@@ -38,6 +38,18 @@ class _ProfilePageState extends State<ProfilePage> {
   String _selectedLanguage = 'Français';
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = context.read<AuthProvider>();
+      final enrollmentProvider = context.read<EnrollmentProvider>();
+      if (authProvider.user != null) {
+        enrollmentProvider.loadEnrollments(authProvider.user!.id);
+      }
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Keep subtitle in sync with the locale provider.
@@ -87,17 +99,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.lightGray,
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 20),
-            _buildUserSection(),
-            const SizedBox(height: 16),
-            _buildStatsSection(),
-            const SizedBox(height: 16),
-            _buildSettingsSection(),
-            const SizedBox(height: 24),
-          ],
+        child: Consumer2<AuthProvider, EnrollmentProvider>(
+          builder: (context, authProvider, enrollmentProvider, _) {
+            return Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 20),
+                _buildUserSection(),
+                const SizedBox(height: 16),
+                _buildStatsSection(),
+                const SizedBox(height: 16),
+                _buildSettingsSection(),
+                const SizedBox(height: 24),
+              ],
+            );
+          },
         ),
       ),
     );

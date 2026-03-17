@@ -149,7 +149,8 @@ class _EnterprisesPageState extends State<EnterprisesPage> {
     return Container(
       color: AppColors.white,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      child: Row(
+      child: Wrap(
+        spacing: 8,
         children: [
           FilterChip(
             label: Row(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:localboost_shared/core/constants/app_colors.dart';
 import 'package:localboost_shared/models/flyer.dart';
-import 'package:localboost_client/screens/flyer_detail_page.dart';
 
 /// Compact flyer card for use in carousels.
 class FlyerCard extends StatelessWidget {
@@ -11,16 +10,25 @@ class FlyerCard extends StatelessWidget {
 
   const FlyerCard({super.key, required this.flyer, this.width = 160});
 
+  void _openViewer(BuildContext context) {
+    final imageUrl = flyer.fileUrl ?? flyer.thumbnailUrl ?? '';
+    if (imageUrl.isEmpty) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _FlyerImageViewer(flyer: flyer, imageUrl: imageUrl),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRecent =
         DateTime.now().difference(flyer.publishedDate).inDays <= 3;
 
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => FlyerDetailPage(flyer: flyer)),
-      ),
+      onTap: () => _openViewer(context),
       child: Container(
         width: width,
         decoration: BoxDecoration(
@@ -147,6 +155,65 @@ class FlyerCard extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Full-screen image viewer for flyers (InteractiveViewer with zoom).
+class _FlyerImageViewer extends StatelessWidget {
+  final Flyer flyer;
+  final String imageUrl;
+
+  const _FlyerImageViewer({required this.flyer, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              flyer.title,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              flyer.storeName,
+              style: GoogleFonts.poppins(
+                color: Colors.white70,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: InteractiveViewer(
+          panEnabled: true,
+          minScale: 0.8,
+          maxScale: 4.0,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+            loadingBuilder: (_, child, progress) {
+              if (progress == null) return child;
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryGreen),
+              );
+            },
+            errorBuilder: (_, __, ___) => const Center(
+              child: Icon(Icons.broken_image, color: Colors.white54, size: 64),
+            ),
+          ),
         ),
       ),
     );

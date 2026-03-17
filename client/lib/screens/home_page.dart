@@ -403,26 +403,40 @@ class _HomePageState extends State<HomePage> {
                 }).toList(),
               ),
               const SizedBox(height: 20),
-              OfferCarousel(
-                title: 'Cartes de Fidélité',
-                subtitle: '${_stampCards.length} programmes',
-                isLoading: _isLoadingHome,
-                itemHeight: 180,
-                onSeeAll: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const StampCardsPage()),
-                ),
-                items: _stampCards.take(8).map((shop) {
-                  return StampCardPreview(
-                    shop: shop,
-                    onTap: () => Navigator.push(
+              Consumer<EnrollmentProvider>(
+                builder: (context, enrollmentProvider, _) {
+                  final enrolledShopIds = enrollmentProvider.enrollments
+                      .map((e) => e.shopId)
+                      .toSet();
+                  final unenrolledCards = _stampCards
+                      .where((s) => !enrolledShopIds.contains(s.id))
+                      .take(8)
+                      .toList();
+                  if (unenrolledCards.isEmpty && !_isLoadingHome) {
+                    return const SizedBox.shrink();
+                  }
+                  return OfferCarousel(
+                    title: 'Cartes de Fidélité',
+                    subtitle: '${unenrolledCards.length} programmes',
+                    isLoading: _isLoadingHome,
+                    itemHeight: 185,
+                    onSeeAll: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => JoinStampCardPage(shop: shop)),
+                      MaterialPageRoute(builder: (_) => const StampCardsPage()),
                     ),
-                    width: 180,
+                    items: unenrolledCards.map((shop) {
+                      return StampCardPreview(
+                        shop: shop,
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => JoinStampCardPage(shop: shop)),
+                        ),
+                        width: 180,
+                      );
+                    }).toList(),
                   );
-                }).toList(),
+                },
               ),
               const SizedBox(height: 20),
               OfferCarousel(
@@ -534,7 +548,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPromoBanner() {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      height: 130,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(

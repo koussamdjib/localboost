@@ -114,7 +114,7 @@ class _FlyersPageState extends State<FlyersPage> {
 
                 if (snapshot.connectionState == ConnectionState.waiting &&
                     !snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: AppColors.primaryGreen));
                 }
 
                 if (snapshot.hasError && !snapshot.hasData) {

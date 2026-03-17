@@ -38,7 +38,7 @@ class NotificationSettingsPage extends StatelessWidget {
       body: Consumer<NotificationProvider>(
         builder: (context, notificationProvider, child) {
           if (notificationProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: AppColors.primaryGreen));
           }
           return _buildSettingsContent(context, notificationProvider);
         },

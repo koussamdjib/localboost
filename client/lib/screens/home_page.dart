@@ -62,9 +62,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _initLocation();
-    _loadEnrollments();
     _loadUnreadCount();
     _loadHomeData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _loadEnrollments();
+    });
   }
 
   Future<void> _loadHomeData() async {

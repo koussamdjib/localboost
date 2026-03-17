@@ -92,16 +92,10 @@ extension _ProfilePageHeaderStats on _ProfilePageState {
 
   Widget _buildStatCard(String label, String value, IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border(
-          top: BorderSide(color: AppColors.primaryGreen.withValues(alpha: 0.3), width: 2.5),
-          left: BorderSide(color: Colors.grey.shade100, width: 1),
-          right: BorderSide(color: Colors.grey.shade100, width: 1),
-          bottom: BorderSide(color: Colors.grey.shade100, width: 1),
-        ),
+        border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
             color: AppColors.primaryGreen.withValues(alpha: 0.07),
@@ -110,39 +104,53 @@ extension _ProfilePageHeaderStats on _ProfilePageState {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: AppColors.primaryGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Column(
+          children: [
+            Container(
+              height: 3,
+              color: AppColors.primaryGreen.withValues(alpha: 0.4),
             ),
-            child: Icon(icon, color: AppColors.primaryGreen, size: 20),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: GoogleFonts.poppins(
-              color: AppColors.charcoalText,
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 11, 14, 14),
+              child: Column(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryGreen.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: AppColors.primaryGreen, size: 20),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    value,
+                    style: GoogleFonts.poppins(
+                      color: AppColors.charcoalText,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      color: Colors.grey.shade600,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              color: Colors.grey.shade600,
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              height: 1.2,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -13,7 +13,7 @@ extension _TransactionHistoryContent on _TransactionHistoryPageState {
             _buildFilterSection(),
             if (snapshot.connectionState == ConnectionState.waiting)
               const Expanded(
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(child: CircularProgressIndicator(color: AppColors.primaryGreen)),
               )
             else if (snapshot.hasError)
               Expanded(

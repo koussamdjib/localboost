@@ -157,7 +157,7 @@ class _StampHistorySectionState extends State<StampHistorySection> {
     if (isLoading) {
       return const Padding(
         padding: EdgeInsets.only(top: 14),
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: CircularProgressIndicator(color: AppColors.primaryGreen)),
       );
     }
 

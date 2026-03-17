@@ -122,7 +122,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       const SizedBox(height: 12),
                       Text('Impossible de charger les notifications',
                           style: GoogleFonts.poppins()),
-                      TextButton(onPressed: _load, child: const Text('Réessayer')),
+                      TextButton(
+                        onPressed: _load,
+                        style: TextButton.styleFrom(foregroundColor: AppColors.primaryGreen),
+                        child: const Text('Réessayer'),
+                      ),
                     ],
                   ),
                 )

@@ -86,17 +86,25 @@ extension _ProfilePageSettingsSection on _ProfilePageState {
           ),
           const Divider(height: 1, indent: 60),
           _buildSettingsItem(
-              icon: Icons.help_outline, title: 'Aide & Support', onTap: () {}),
+              icon: Icons.help_outline,
+              title: 'Aide & Support',
+              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bientôt disponible'), duration: Duration(seconds: 2)),
+              )),
           const Divider(height: 1, indent: 60),
           _buildSettingsItem(
               icon: Icons.info_outline,
               title: 'À propos de LocalBoost',
-              onTap: () {}),
+              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bientôt disponible'), duration: Duration(seconds: 2)),
+              )),
           const Divider(height: 1, indent: 60),
           _buildSettingsItem(
               icon: Icons.privacy_tip_outlined,
               title: 'Confidentialité',
-              onTap: () {}),
+              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bientôt disponible'), duration: Duration(seconds: 2)),
+              )),
           const Divider(height: 1, indent: 60),
           _buildSettingsItem(
             icon: Icons.delete_forever_outlined,

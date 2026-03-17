@@ -31,7 +31,8 @@ class _DealsPageState extends State<DealsPage> {
   @override
   void initState() {
     super.initState();
-    _initLocation();
+    _loadDeals(); // load immediately without waiting for GPS
+    _initLocation(); // resolve location in background → refresh
   }
 
   @override
@@ -45,10 +46,7 @@ class _DealsPageState extends State<DealsPage> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      if (permission == LocationPermission.deniedForever) {
-        _loadDeals();
-        return;
-      }
+      if (permission == LocationPermission.deniedForever) return;
       final pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
@@ -56,9 +54,9 @@ class _DealsPageState extends State<DealsPage> {
       if (mounted) {
         setState(() =>
             _userLocation = LatLng(pos.latitude, pos.longitude));
+        _loadDeals(); // refresh with GPS position
       }
     } catch (_) {}
-    _loadDeals();
   }
 
   Future<void> _loadDeals() async {

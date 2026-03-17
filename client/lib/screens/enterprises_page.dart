@@ -24,6 +24,7 @@ class _EnterprisesPageState extends State<EnterprisesPage> {
   List<ShopDiscoveryShop> _filtered = [];
   Set<int> _favoriteIds = {};
   bool _showFavoritesOnly = false;
+  String? _selectedCategory;
   bool _isLoading = false;
   String? _error;
 
@@ -75,6 +76,9 @@ class _EnterprisesPageState extends State<EnterprisesPage> {
     var list = _showFavoritesOnly
         ? _all.where((s) => _favoriteIds.contains(s.id)).toList()
         : _all.toList();
+    if (_selectedCategory != null) {
+      list = list.where((s) => s.category == _selectedCategory).toList();
+    }
     if (q.isNotEmpty) {
       list = list.where((s) {
         return s.name.toLowerCase().contains(q) ||
@@ -146,46 +150,96 @@ class _EnterprisesPageState extends State<EnterprisesPage> {
   }
 
   Widget _buildFilterChips() {
+    final categories = (_all.map((s) => s.category).where((c) => c.isNotEmpty).toSet().toList()
+          ..sort());
     return Container(
       color: AppColors.white,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-      child: Wrap(
-        spacing: 8,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FilterChip(
-            label: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _showFavoritesOnly ? Icons.favorite : Icons.favorite_border,
-                  size: 14,
-                  color: _showFavoritesOnly ? Colors.white : Colors.red,
+          Wrap(
+            spacing: 8,
+            children: [
+              FilterChip(
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _showFavoritesOnly ? Icons.favorite : Icons.favorite_border,
+                      size: 14,
+                      color: _showFavoritesOnly ? Colors.white : Colors.red,
+                    ),
+                    const SizedBox(width: 4),
+                    Text('Favoris',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: _showFavoritesOnly
+                              ? Colors.white
+                              : AppColors.charcoalText,
+                        )),
+                  ],
                 ),
-                const SizedBox(width: 4),
-                Text('Favoris',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: _showFavoritesOnly
-                          ? Colors.white
-                          : AppColors.charcoalText,
-                    )),
-              ],
-            ),
-            selected: _showFavoritesOnly,
-            onSelected: (val) {
-              setState(() => _showFavoritesOnly = val);
-              _applyFilter();
-            },
-            selectedColor: Colors.red,
-            backgroundColor: AppColors.lightGray,
-            showCheckmark: false,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)),
-            side: BorderSide.none,
+                selected: _showFavoritesOnly,
+                onSelected: (val) {
+                  setState(() => _showFavoritesOnly = val);
+                  _applyFilter();
+                },
+                selectedColor: Colors.red,
+                backgroundColor: AppColors.lightGray,
+                showCheckmark: false,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                side: BorderSide.none,
+              ),
+            ],
           ),
+          if (categories.isNotEmpty) ...
+            [
+              const SizedBox(height: 6),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildCategoryChip(null, 'Tous'),
+                    ...categories.map((c) => Padding(
+                          padding: const EdgeInsets.only(left: 6),
+                          child: _buildCategoryChip(c, c),
+                        )),
+                  ],
+                ),
+              ),
+            ],
         ],
       ),
+    );
+  }
+
+  Widget _buildCategoryChip(String? category, String label) {
+    final isSelected = _selectedCategory == category;
+    return FilterChip(
+      label: Text(
+        label,
+        style: GoogleFonts.poppins(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: isSelected ? Colors.white : AppColors.charcoalText,
+        ),
+      ),
+      selected: isSelected,
+      onSelected: (_) {
+        setState(() => _selectedCategory =
+            (category == null || _selectedCategory == category)
+                ? null
+                : category);
+        _applyFilter();
+      },
+      selectedColor: AppColors.primaryGreen,
+      backgroundColor: AppColors.lightGray,
+      showCheckmark: false,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      side: BorderSide.none,
     );
   }
 

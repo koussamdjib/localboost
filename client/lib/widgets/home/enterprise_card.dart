@@ -228,6 +228,24 @@ class _EnterpriseCardState extends State<EnterpriseCard> {
               ],
             ),
           ],
+          if (shop.distanceKm != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.near_me_outlined,
+                    size: 12, color: AppColors.primaryGreen),
+                const SizedBox(width: 3),
+                Text(
+                  '${shop.distanceKm!.toStringAsFixed(1)} km',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    color: AppColors.primaryGreen,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 8),
           _buildBadges(),
         ],

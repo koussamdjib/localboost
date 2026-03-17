@@ -271,6 +271,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().user;
+    final firstName = (user?.name.isNotEmpty == true)
+        ? user!.name.split(' ').first
+        : 'Vous';
     return Scaffold(
       backgroundColor: AppColors.lightGray,
       appBar: AppBar(
@@ -301,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'LocalBoost',
+                    firstName,
                     style: GoogleFonts.poppins(
                       color: AppColors.charcoalText,
                       fontWeight: FontWeight.w800,

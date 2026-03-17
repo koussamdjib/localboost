@@ -18,17 +18,37 @@ extension _DashboardScreenView on _DashboardScreenState {
       totalRedemptions += deal.redemptionCount;
     }
 
+    final shopProvider = context.watch<ShopProvider>();
+    final businessName = shopProvider.selectedShop?.name ??
+        shopProvider.merchantAccount?.businessName ??
+        'Mon commerce';
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'Tableau de bord',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w700,
-            color: AppColors.charcoalText,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              businessName,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+                color: AppColors.charcoalText,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              'Tableau de bord',
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade500,
+              ),
+            ),
+          ],
         ),
         actions: [
           const ShopSelectorDropdown(),

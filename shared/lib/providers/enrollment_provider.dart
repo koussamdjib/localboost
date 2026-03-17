@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'package:localboost_shared/models/enrollment.dart';
 import 'package:localboost_shared/services/enrollment_service.dart';
@@ -20,10 +19,8 @@ class EnrollmentProvider extends ChangeNotifier {
   String? get error => _error;
 
   void _notifyStateChanged() {
-    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.idle) {
-      notifyListeners();
-    } else {
-      SchedulerBinding.instance.addPostFrameCallback((_) => notifyListeners());
-    }
+    Future.microtask(() {
+      if (hasListeners) notifyListeners();
+    });
   }
 }

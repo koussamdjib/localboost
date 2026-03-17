@@ -114,6 +114,15 @@ class ApiExceptionFactory {
 
     switch (statusCode) {
       case 400:
+        final fieldErrors400 = _extractFieldErrors(data);
+        if (fieldErrors400 != null && fieldErrors400.isNotEmpty) {
+          return ValidationException(
+            message,
+            statusCode: statusCode,
+            data: data,
+            fieldErrors: fieldErrors400,
+          );
+        }
         return ClientException(
           message,
           statusCode: statusCode,
@@ -164,11 +173,18 @@ class ApiExceptionFactory {
 
   static String? _extractErrorMessage(dynamic data) {
     if (data is Map<String, dynamic>) {
-      // Try common error message keys
-      return data['message'] ??
-          data['error'] ??
-          data['detail'] ??
-          data['msg'];
+      // Try common error message keys first
+      final direct = data['message'] ?? data['error'] ?? data['detail'] ?? data['msg'];
+      if (direct != null) return direct.toString();
+      // Django DRF non_field_errors
+      final nfe = data['non_field_errors'];
+      if (nfe is List && nfe.isNotEmpty) return nfe.first.toString();
+      // Django DRF field-level errors: {"field": ["msg"]}
+      for (final entry in data.entries) {
+        final value = entry.value;
+        if (value is List && value.isNotEmpty) return value.first.toString();
+        if (value is String) return value;
+      }
     }
     return null;
   }

@@ -42,13 +42,43 @@ class EnterpriseTabStampCards extends StatelessWidget {
           itemCount: loyaltyCards.length,
           itemBuilder: (context, index) {
             final shop = loyaltyCards[index];
-            final isEnrolled = shop.enrollmentId != null;
+
+            // Cross-reference with enrollments since API shop objects don't
+            // carry enrollmentId. Match by loyaltyProgramId first, then shopId.
+            final enrollment = enrollmentProvider.enrollments.where((e) {
+              if (shop.loyaltyProgramId != null) {
+                return e.loyaltyProgramId == shop.loyaltyProgramId;
+              }
+              return e.shopId == shop.id;
+            }).firstOrNull;
+
+            if (enrollment != null) {
+              final enrolledShop = Shop(
+                id: shop.id,
+                enrollmentId: enrollment.id,
+                loyaltyProgramId: shop.loyaltyProgramId,
+                name: shop.name,
+                stamps: enrollment.stampsCollected,
+                totalRequired: enrollment.stampsRequired,
+                dealType: shop.dealType,
+                timeLeft: shop.timeLeft,
+                location: shop.location,
+                rewardValue: shop.rewardValue,
+                rewardType: shop.rewardType,
+                imageUrl: shop.imageUrl,
+                logoUrl: shop.logoUrl,
+                latitude: shop.latitude,
+                longitude: shop.longitude,
+              );
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: _buildEnrolledCard(context, enrolledShop),
+              );
+            }
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: isEnrolled
-                  ? _buildEnrolledCard(context, shop)
-                  : _buildDiscoveryCard(context, shop, enrollmentProvider),
+              child: _buildDiscoveryCard(context, shop, enrollmentProvider),
             );
           },
         );

@@ -78,30 +78,59 @@ class _ShopDetailPageState extends State<ShopDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEnrolled = shop.enrollmentId != null;
+    // Cross-reference with EnrollmentProvider since API shop objects don't
+    // carry enrollmentId. Match by loyaltyProgramId first, then shopId.
+    final enrollments = context.watch<EnrollmentProvider>().enrollments;
+    final enrollment = enrollments.where((e) {
+      if (shop.loyaltyProgramId != null) {
+        return e.loyaltyProgramId == shop.loyaltyProgramId;
+      }
+      return e.shopId == shop.id;
+    }).firstOrNull;
+
+    final isEnrolled = enrollment != null;
+    final displayShop = enrollment != null
+        ? Shop(
+            id: shop.id,
+            enrollmentId: enrollment.id,
+            loyaltyProgramId: shop.loyaltyProgramId,
+            name: shop.name,
+            stamps: enrollment.stampsCollected,
+            totalRequired: enrollment.stampsRequired,
+            dealType: shop.dealType,
+            timeLeft: shop.timeLeft,
+            location: shop.location,
+            rewardValue: shop.rewardValue,
+            rewardType: shop.rewardType,
+            imageUrl: shop.imageUrl,
+            logoUrl: shop.logoUrl,
+            latitude: shop.latitude,
+            longitude: shop.longitude,
+          )
+        : shop;
 
     return Scaffold(
       backgroundColor: AppColors.lightGray,
       body: CustomScrollView(
         slivers: [
           ShopDetailHeroAppBar(
-            shop: shop,
+            shop: displayShop,
             onBack: () => Navigator.pop(context),
           ),
           SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShopDetailHeader(shop: shop),
+                ShopDetailHeader(shop: displayShop),
                 const SizedBox(height: 12),
-                if (shop.dealType == 'Loyalty') ...[
-                  ShopDetailLoyaltyCard(shop: shop, isEnrolled: isEnrolled),
+                if (displayShop.dealType == 'Loyalty') ...[
+                  ShopDetailLoyaltyCard(shop: displayShop, isEnrolled: isEnrolled),
                   const SizedBox(height: 12),
                 ],
-                ShopDetailInfoRow(shop: shop),
+                ShopDetailInfoRow(shop: displayShop),
                 const SizedBox(height: 20),
                 ShopDetailActions(
-                  shop: shop,
+                  shop: displayShop,
                   isEnrolled: isEnrolled,
                   isEnrolling: _enrolling,
                   onEnroll: _enroll,

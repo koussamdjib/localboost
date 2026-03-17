@@ -197,6 +197,7 @@ extension _MerchantScannerActions on _MerchantScannerScreenState {
       _lastScannedCode = null;
       _isProcessing = false;
     });
+    if (kIsWeb) _webTokenController.clear();
   }
 
   void _showError(String message) {

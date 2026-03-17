@@ -1,11 +1,11 @@
 {
-    "name": "localboost_merchant",
-    "short_name": "localboost_merchant",
+    "name": "LocalBoost Merchant",
+    "short_name": "LB Merchant",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#2ECC71",
+    "description": "Tableau de bord commerçant LocalBoost — gérez vos offres, deals et programmes de fidélité.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

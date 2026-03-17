@@ -1,5 +1,7 @@
 part of '../merchant_scanner_screen.dart';
 
+// ignore_for_file: unused_element — _buildAppBar/_buildOfflineBanner also used by web part
+
 extension _MerchantScannerView on _MerchantScannerScreenState {
   Widget _buildMerchantScannerScreen() {
     return Scaffold(
@@ -78,7 +80,7 @@ extension _MerchantScannerView on _MerchantScannerScreenState {
           ),
         ],
       ),
-      actions: _scannedEnrollment == null
+      actions: _scannedEnrollment == null && !kIsWeb
           ? [
               IconButton(
                 icon: Icon(

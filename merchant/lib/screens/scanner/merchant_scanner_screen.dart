@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -18,6 +19,7 @@ import 'package:localboost_merchant/widgets/scanner/scanner_feedback_dialogs.dar
 part 'merchant_scanner/merchant_scanner_barcode_handler.dart';
 part 'merchant_scanner/merchant_scanner_actions.dart';
 part 'merchant_scanner/merchant_scanner_view.dart';
+part 'merchant_scanner/merchant_scanner_web_input.dart';
 
 /// Merchant scanner screen for adding stamps and redeeming rewards
 class MerchantScannerScreen extends StatefulWidget {
@@ -35,10 +37,11 @@ class MerchantScannerScreen extends StatefulWidget {
 }
 
 class _MerchantScannerScreenState extends State<MerchantScannerScreen> {
-  final MobileScannerController _controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.normal,
-    facing: CameraFacing.back,
-  );
+  // Camera controller: only used on non-web platforms.
+  late final MobileScannerController _controller;
+
+  // Web fallback: manual token input.
+  final TextEditingController _webTokenController = TextEditingController();
 
   final OfflineQueueService _offlineQueue = OfflineQueueService();
   final ConnectivityService _connectivity = ConnectivityService();
@@ -51,6 +54,12 @@ class _MerchantScannerScreenState extends State<MerchantScannerScreen> {
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb) {
+      _controller = MobileScannerController(
+        detectionSpeed: DetectionSpeed.normal,
+        facing: CameraFacing.back,
+      );
+    }
     _connectivity.isOnline.then((online) {
       if (mounted) setState(() => _isOnline = online);
     });
@@ -61,7 +70,8 @@ class _MerchantScannerScreenState extends State<MerchantScannerScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (!kIsWeb) _controller.dispose();
+    _webTokenController.dispose();
     super.dispose();
   }
 
@@ -74,6 +84,7 @@ class _MerchantScannerScreenState extends State<MerchantScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) return _buildWebManualInput();
     return _buildMerchantScannerScreen();
   }
 }

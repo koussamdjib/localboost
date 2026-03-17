@@ -1,0 +1,53 @@
+
+
+---
+
+### **Copy/Paste this Prompt into Claude:**
+
+**Subject: Flutter MVP Development - LocalBoost Loyalty App**
+
+"I need you to write the code for a Flutter MVP of a loyalty and deals app called **'LocalBoost'**. The goal is a high-fidelity 'Single Screen' prototype that uses **fake data** but follows this exact UI and Logic:
+
+### **1. UI Styling (Based on Image)**
+
+* **Color Palette:** Primary Green (`#2ECC71`), Urgency Orange (`#E67E22`), and Charcoal Text (`#2C3E50`).
+* **Main Screen Layout:** A Scaffold with a Bottom Navigation Bar.
+* **Bottom Navigation Bar:** 4 items: [Home, My Cards, COLLECT (Special Center Button), Profile].
+* **The 'COLLECT' Button:** This must be an oversized, floating action button in the center of the Nav Bar with a '⚡' icon and a Green-to-Orange gradient.
+* **Home Page Content:** * A search bar at the top.
+* A 'Map View' container (use a placeholder colored box with 'Map Interface' text for now).
+* A 'Deals Near You' horizontal scrollable list of cards. Each card shows: Shop Image, Shop Name, Stamp Progress (e.g., 4/5 Stamps), and a 'Time Left' badge for Flash Deals.
+
+
+
+### **2. Core Logic (The Flow)**
+
+* **Option A Implementation:** When the user taps the center 'COLLECT' button, open a Full-Screen Modal or a new Page that:
+1. Instantly sets the screen brightness to max (simulated with a note).
+2. Displays a large, clean QR Code (use the `qr_flutter` package or a placeholder image).
+3. Displays the text: 'Show this to the merchant to receive your stamp.'
+
+
+* **Navigation:** Ensure the Bottom Nav Bar switches between a 'Home Feed' and a 'My Cards' list.
+
+### **3. Fake Data (Mock Objects)**
+
+Create a simple List of 'Shop' objects including:
+
+* `name`: 'Zuma Coffee', 'Mama Jollof', 'Corner Barber'.
+* `stamps`: 4, 2, 5.
+* `totalRequired`: 5.
+* `dealType`: 'Flash Sale' or 'Loyalty'.
+* `timeLeft`: '45m left'.
+
+### **4. Technical Constraints**
+
+* Use **Google Fonts (Poppins or Roboto)** for high legibility.
+* Keep the code in a single `main.dart` file for easy testing.
+* Use `Container` decorations to mimic the card shadows and rounded corners seen in the UI image.
+
+Please provide the full Dart code."
+
+---
+
+

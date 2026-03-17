@@ -1,0 +1,28 @@
+[Unit]
+Description=LocalBoost Django Backend (Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=localboost
+Group=www-data
+WorkingDirectory=/srv/localboost/backend
+EnvironmentFile=/etc/localboost/localboost-backend.env
+ExecStart=/srv/localboost/.venv/bin/gunicorn \
+  --workers 3 \
+  --worker-class gthread \
+  --threads 4 \
+  --bind 127.0.0.1:8000 \
+  --timeout 60 \
+  --max-requests 1000 \
+  --max-requests-jitter 100 \
+  --access-logfile - \
+  --error-logfile - \
+  config.wsgi:application
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target

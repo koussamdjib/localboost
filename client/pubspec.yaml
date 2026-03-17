@@ -1,0 +1,46 @@
+name: localboost_client
+description: LocalBoost Customer App - Loyalty and Deals
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  localboost_shared:
+    path: ../shared
+
+  # State Management
+  provider: ^6.1.0
+  
+  # UI & Fonts
+  google_fonts: ^6.1.0
+  
+  # QR Code
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.0.0
+  
+  # Maps & Location
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  geolocator: ^10.1.0
+  http: ^1.1.0
+  
+  # Utilities
+  intl: 0.20.2
+  share_plus: ^10.0.0
+  url_launcher: ^6.2.0
+  image_picker: ^1.0.0
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
